@@ -1,7 +1,6 @@
 # Feature Specification: Trace and Evaluation
 
 - Status: implemented
-- Last reviewed: 2026-10-15
 
 ## Problem
 
