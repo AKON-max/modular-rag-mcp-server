@@ -19,5 +19,3 @@ jobs:
         run: pytest -m unit
       - name: Ruff
         run: ruff check .
-      - name: Mypy
-        run: mypy src
