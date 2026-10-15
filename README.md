@@ -50,8 +50,8 @@ MCP Client / Streamlit
 | `src/core/` | 配置、检索、融合、重排、响应和 Trace |
 | `src/ingestion/` | 加载、分块、增强、多模态处理和索引写入 |
 | `src/mcp_server/` | MCP Server、Tools、Resources 和 Prompts |
-| `src/evaluation/` | Ragas 和自定义评估 |
-| `src/dashboard/` | Streamlit 调试界面 |
+| `src/observability/evaluation/` | Ragas 和自定义评估 |
+| `src/observability/dashboard/` | Streamlit 调试界面 |
 | `config/` | 配置、Prompt 和凭据模板 |
 | `scripts/` | ingest、query、evaluate、dashboard 入口 |
 | `tests/` | Unit、Integration 和 E2E 测试 |
