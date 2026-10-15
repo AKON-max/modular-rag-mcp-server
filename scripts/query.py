@@ -23,7 +23,7 @@ Exit codes:
 import argparse
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 # Ensure project root is on sys.path
 _SCRIPT_DIR = Path(__file__).resolve().parent
@@ -40,13 +40,13 @@ if sys.platform == "win32":
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.core.settings import load_settings
-from src.core.query_engine.query_processor import QueryProcessor
-from src.core.query_engine.hybrid_search import create_hybrid_search
 from src.core.query_engine.dense_retriever import create_dense_retriever
-from src.core.query_engine.sparse_retriever import create_sparse_retriever
+from src.core.query_engine.hybrid_search import create_hybrid_search
+from src.core.query_engine.query_processor import QueryProcessor
 from src.core.query_engine.reranker import create_core_reranker
-from src.core.trace import TraceContext, TraceCollector
+from src.core.query_engine.sparse_retriever import create_sparse_retriever
+from src.core.settings import load_settings
+from src.core.trace import TraceCollector, TraceContext
 from src.ingestion.storage.bm25_indexer import BM25Indexer
 from src.libs.embedding.embedding_factory import EmbeddingFactory
 from src.libs.vector_store.vector_store_factory import VectorStoreFactory
@@ -103,13 +103,13 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _format_filters(filters: Dict[str, Any]) -> str:
+def _format_filters(filters: dict[str, Any]) -> str:
     if not filters:
         return "(none)"
     return ", ".join(f"{k}={v}" for k, v in filters.items())
 
 
-def _print_results(results: List[Any], top_k: int, title: str = "RESULTS") -> None:
+def _print_results(results: list[Any], top_k: int, title: str = "RESULTS") -> None:
     print("\n" + "=" * 60)
     print(f"{title} (top_k={top_k}, returned={len(results)})")
     print("=" * 60)
@@ -171,7 +171,7 @@ def _run_query(
     hybrid_search,
     reranker,
     query: str,
-    top_k: Optional[int],
+    top_k: int | None,
     use_rerank: bool,
     verbose: bool,
 ) -> int:

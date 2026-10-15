@@ -79,3 +79,6 @@ ignore_missing_imports = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
+[tool.ruff.lint.per-file-ignores]
+"scripts/ingest.py" = ["E402"]
+"scripts/query.py" = ["E402"]

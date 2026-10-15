@@ -1,64 +1,64 @@
 # Modular RAG MCP Server
 
-A modular Retrieval-Augmented Generation service that exposes knowledge retrieval through the Model Context Protocol (MCP). The project separates ingestion, retrieval, response generation, tracing, and evaluation so each component can be replaced or tested independently.
+这是一个模块化 RAG 服务，通过 MCP（Model Context Protocol）向 AI 工具暴露知识检索能力。项目把摄取、检索、响应组装、Trace 和评估拆成独立模块，便于替换组件、定位问题和单独测试。
 
-## Capabilities
+## 核心能力
 
-- PDF / Markdown ingestion and semantic chunking
-- LLM-assisted chunk refinement and metadata enrichment
-- Vision captioning for images inside documents
-- Dense, sparse, and hybrid retrieval
-- RRF fusion and configurable reranking
-- MCP tools for knowledge retrieval
-- Trace records for ingestion and query paths
-- Ragas and custom evaluation with fixed regression sets
-- Streamlit dashboard for inspecting documents, traces, and metrics
+- PDF / Markdown 文档加载与语义分块
+- LLM 辅助 Chunk 精炼和元数据增强
+- 文档图片 Vision Caption
+- Dense、Sparse 和 Hybrid Retrieval
+- RRF 融合与可配置 Reranker
+- MCP 知识检索工具
+- 摄取与查询链路 Trace
+- Ragas + 自定义评估和固定回归集
+- Streamlit Dashboard，用于查看文档、Trace 和评估结果
 
-## Architecture
+## 架构
 
 ```text
 MCP Client / Streamlit
-        │
-        ▼
-Query Engine
-  ├── query rewrite
-  ├── dense retrieval
-  ├── sparse retrieval
-  ├── RRF fusion
-  ├── reranker
-  └── response assembly
+          │
+          ▼
+      Query Engine
+  ├── Query Rewrite
+  ├── Dense Retrieval
+  ├── Sparse Retrieval
+  ├── RRF Fusion
+  ├── Reranker
+  └── Response Assembly
 
-Ingestion Pipeline
-  ├── document loader
-  ├── semantic splitter
-  ├── chunk refinement
-  ├── metadata enrichment
-  ├── image captioning
-  └── vector / keyword index writers
+    Ingestion Pipeline
+  ├── Document Loader
+  ├── Semantic Splitter
+  ├── Chunk Refinement
+  ├── Metadata Enrichment
+  ├── Image Captioning
+  └── Vector / Keyword Index Writers
 
-Storage
-  ├── Chroma vector store
-  ├── sparse index
-  ├── SQLite ingestion history
-  └── trace store
+          Storage
+  ├── Chroma Vector Store
+  ├── Sparse Index
+  ├── SQLite Ingestion History
+  └── Trace Store
 ```
 
-## Repository layout
+## 仓库结构
 
-| Path | Responsibility |
+| 路径 | 职责 |
 |---|---|
-| `src/core/` | configuration, retrieval, fusion, reranking, response, tracing |
-| `src/ingestion/` | loaders, chunking, enrichment, multimodal processing, index writes |
-| `src/mcp_server/` | MCP server, protocol tools, resources, prompts |
-| `src/evaluation/` | Ragas and custom evaluation |
-| `src/dashboard/` | Streamlit inspection UI |
-| `config/` | settings, prompts, credential templates |
-| `scripts/` | ingest, query, evaluate, dashboard entry points |
-| `tests/` | unit, integration and end-to-end tests |
-| `specs/` | maintained behavior contracts |
-| `docs/` | architecture, operations and testing notes |
+| `src/core/` | 配置、检索、融合、重排、响应和 Trace |
+| `src/ingestion/` | 加载、分块、增强、多模态处理和索引写入 |
+| `src/mcp_server/` | MCP Server、Tools、Resources 和 Prompts |
+| `src/evaluation/` | Ragas 和自定义评估 |
+| `src/dashboard/` | Streamlit 调试界面 |
+| `config/` | 配置、Prompt 和凭据模板 |
+| `scripts/` | ingest、query、evaluate、dashboard 入口 |
+| `tests/` | Unit、Integration 和 E2E 测试 |
+| `specs/` | 功能规格和验收标准 |
+| `docs/` | 架构、AI 工程和测试说明 |
 
-## Setup
+## 环境准备
 
 ```bash
 python -m venv .venv
@@ -67,28 +67,28 @@ pip install -e ".[dev]"
 cp .env.example .env
 ```
 
-Configure the selected provider in `config/settings.yaml`. Real API keys belong in environment variables or local credential files; never commit them.
+在 `config/settings.yaml` 中选择 Provider。真实 API Key 只放在环境变量或本地凭据文件中，不要提交到仓库。
 
-## Run
+## 运行
 
 ```bash
-# Ingest a document
+# 摄取文档
 python scripts/ingest.py path/to/document.pdf
 
-# Query the retrieval pipeline
-python scripts/query.py "How does hybrid retrieval work?"
+# 执行查询
+python scripts/query.py "Hybrid Retrieval 是怎么工作的？"
 
-# Run evaluation
+# 运行评估
 python scripts/evaluate.py
 
-# Start the dashboard
+# 启动 Dashboard
 python scripts/start_dashboard.py
 
-# Start the MCP server
+# 启动 MCP Server
 python main.py
 ```
 
-## Tests
+## 测试
 
 ```bash
 pytest -m unit
@@ -96,16 +96,16 @@ pytest -m "not llm"
 ruff check .
 ```
 
-Tests marked `llm` require real provider credentials and are intentionally excluded from normal local verification.
+标记为 `llm` 的测试需要真实模型服务，默认不参与本地快速验证。
 
-## Evaluation
+## 评估
 
-The evaluation suite covers retrieval quality, answer faithfulness, context precision, latency, and trace completeness. Golden cases and thresholds are maintained as versioned regression inputs rather than one-off notebook results.
+评估覆盖检索质量、答案忠实度、上下文精度、延迟和 Trace 完整性。Golden Case 和阈值作为版本化回归输入维护，不使用一次性 Notebook 结果代替工程评估。
 
-## Known limitations
+## 当前边界
 
-- Provider availability and rate limits affect evaluation runs.
-- Dense retrieval and reranking quality depend on the configured embedding and reranker models.
-- The dashboard is an inspection tool, not a production observability platform.
-- Local Chroma and SQLite are suitable for development and portfolio-scale corpora; larger deployments need separate storage and operational controls.
-- Mypy is configured but the legacy codebase still has unresolved type errors.
+- Provider 的可用性和限流会影响评估结果。
+- 检索和重排质量依赖配置的 Embedding 与 Reranker 模型。
+- Dashboard 是调试工具，不是生产级可观测平台。
+- 本地 Chroma 和 SQLite 适合开发及作品集规模语料；更大规模需要独立存储、并发控制和运维体系。
+- Mypy 已配置，但旧代码仍存在类型错误，尚未设为 CI 阻断项。
