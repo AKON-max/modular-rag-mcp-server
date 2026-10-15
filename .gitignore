@@ -28,14 +28,11 @@ config/settings.yaml.bak
 .claude/
 .github/skills/
 
-# Local-only learning, interview, resume, and course material
-/后端基础高频面试题.md
-/后端综合面试题_结合个人项目版.xlsx
-/面试知识库_Modular-RAG-MCP-Server.md
-/面试自我介绍&简历包装手册_三项目组合版.md
-/题库导入模板.xlsx
-/gen_qa_xlsx.py
-/*.pdf
-/xiaozhe-E-commerce-main-*/
-/smart-appointment-ai-agent-master/
+# Local-only working material (notes, drafts, private assets)
 /_local/
+
+# Third-party reference copies
+/smart-appointment-ai-agent-master/
+
+# Reference PDFs kept at the repo root
+/*.pdf
