@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Modular RAG MCP Server 运行时架构",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [1240, 700],
+    "views": [
+      {
+        "id": "query-path",
+        "label": "在线查询链路",
+        "focus": ["clients", "mcp", "query", "rerank", "stores", "llm"],
+        "note": "MCP Client 调用标准工具，查询引擎读取混合索引，融合并重排后返回可信引用。"
+      },
+      {
+        "id": "ingestion-path",
+        "label": "离线摄取链路",
+        "focus": ["dashboard", "ingestion", "factory", "stores", "llm"],
+        "note": "Dashboard 触发 PDF 摄取，经过分块、变换、Embedding 和 Upsert 写入检索存储。"
+      },
+      {
+        "id": "operations",
+        "label": "可观测与评测",
+        "focus": ["dashboard", "query", "ingestion", "factory"],
+        "note": "Dashboard 读取结构化 Trace，并将查询和摄取链路纳入评测与回归分析。"
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "MCP Clients",
+      "sublabel": "Copilot / Claude / Cursor",
+      "tag": "Tool Calling",
+      "pos": [40, 180],
+      "size": [170, 80]
+    },
+    {
+      "id": "mcp",
+      "type": "backend",
+      "label": "MCP Server",
+      "sublabel": "JSON-RPC / Tools",
+      "tag": "3 个知识工具",
+      "pos": [260, 180],
+      "size": [180, 80]
+    },
+    {
+      "id": "query",
+      "type": "backend",
+      "label": "查询编排引擎",
+      "sublabel": "Query Process / Response",
+      "tag": "在线链路",
+      "pos": [500, 180],
+      "size": [180, 80]
+    },
+    {
+      "id": "rerank",
+      "type": "backend",
+      "label": "融合与重排",
+      "sublabel": "RRF / Cross-Encoder / LLM",
+      "tag": "精排",
+      "pos": [740, 180],
+      "size": [180, 80]
+    },
+    {
+      "id": "llm",
+      "type": "external",
+      "label": "AI Provider",
+      "sublabel": "OpenAI / Azure / Ollama / DeepSeek",
+      "tag": "模型与 Embedding",
+      "pos": [980, 180],
+      "size": [190, 80]
+    },
+    {
+      "id": "dashboard",
+      "type": "frontend",
+      "label": "Streamlit Dashboard",
+      "sublabel": "数据 / 摄取 / 查询 / 评测",
+      "tag": "六页面",
+      "pos": [40, 460],
+      "size": [180, 80]
+    },
+    {
+      "id": "ingestion",
+      "type": "backend",
+      "label": "Ingestion Pipeline",
+      "sublabel": "PDF / Chunk / Transform / Batch",
+      "tag": "离线链路",
+      "pos": [260, 460],
+      "size": [180, 80]
+    },
+    {
+      "id": "factory",
+      "type": "backend",
+      "label": "可插拔 Provider 层",
+      "sublabel": "Factory / 接口抽象",
+      "tag": "LLM / Embedding / Reranker",
+      "pos": [500, 460],
+      "size": [190, 80]
+    },
+    {
+      "id": "stores",
+      "type": "database",
+      "label": "混合检索存储",
+      "sublabel": "ChromaDB + BM25 Index",
+      "tag": "Dense + Sparse",
+      "pos": [740, 460],
+      "size": [190, 80]
+    }
+  ],
+  "connections": [
+    {
+      "id": "clients-mcp",
+      "from": "clients",
+      "to": "mcp",
+      "label": "MCP Tool Call",
+      "variant": "emphasis",
+      "labelAt": [235, 140]
+    },
+    {
+      "id": "mcp-query",
+      "from": "mcp",
+      "to": "query",
+      "label": "query_knowledge_hub",
+      "variant": "emphasis",
+      "labelAt": [470, 140]
+    },
+    {
+      "id": "query-rerank",
+      "from": "query",
+      "to": "rerank",
+      "label": "Top-K 融合结果",
+      "variant": "emphasis",
+      "labelAt": [710, 140]
+    },
+    {
+      "id": "query-stores",
+      "from": "query",
+      "to": "stores",
+      "label": "Dense + Sparse 召回",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "via": [[590, 400], [835, 400]],
+      "labelAt": [835, 375]
+    },
+    {
+      "id": "rerank-llm",
+      "from": "rerank",
+      "to": "llm",
+      "label": "Rerank / Response",
+      "variant": "dashed",
+      "route": "straight",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelAt": [950, 140]
+    },
+    {
+      "id": "dashboard-ingestion",
+      "from": "dashboard",
+      "to": "ingestion",
+      "label": "上传与管理",
+      "labelAt": [240, 430]
+    },
+    {
+      "id": "ingestion-factory",
+      "from": "ingestion",
+      "to": "factory",
+      "label": "Split / Embed",
+      "labelAt": [470, 430]
+    },
+    {
+      "id": "factory-stores",
+      "from": "factory",
+      "to": "stores",
+      "label": "Upsert / Build Index",
+      "variant": "emphasis",
+      "labelAt": [715, 430]
+    },
+    {
+      "id": "factory-llm",
+      "from": "factory",
+      "to": "llm",
+      "label": "Provider 调用",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "right",
+      "via": [[595, 620], [1195, 620], [1195, 220]],
+      "labelAt": [900, 600]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "在线查询",
+      "items": [
+        "MCP Server 对外暴露 query_knowledge_hub、list_collections、get_document_summary",
+        "Dense 与 BM25 双路召回后通过 RRF 融合，可选 Reranker 精排"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "离线摄取",
+      "items": [
+        "PDF 经 Loader、Splitter、Chunk Refiner 和 Metadata Enricher 处理",
+        "Dense 向量写入 ChromaDB，BM25 统计构建本地稀疏索引"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "工程化能力",
+      "items": [
+        "LLM、Embedding、Reranker、VectorStore、Evaluator 均由配置驱动切换",
+        "Ingestion 与 Query 生成结构化 Trace，供 Dashboard 和 Ragas 回归分析"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Runtime data
+data/
+cache/
+logs/
+*.log
+traces.jsonl
+
+# Credentials
+.env
+.env.*
+!.env.example
+config/test_credentials.yaml
+config/settings.yaml.bak
+
+# IDE / AI tooling
+.idea/
+.vscode/
+.claude/
+.github/skills/
+
+# Local-only learning, interview, resume, and course material
+/后端基础高频面试题.md
+/后端综合面试题_结合个人项目版.xlsx
+/面试知识库_Modular-RAG-MCP-Server.md
+/面试自我介绍&简历包装手册_三项目组合版.md
+/题库导入模板.xlsx
+/gen_qa_xlsx.py
+/*.pdf
+/xiaozhe-E-commerce-main-*/
+/smart-appointment-ai-agent-master/
+/_local/
